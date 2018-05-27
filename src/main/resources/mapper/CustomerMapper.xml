@@ -6,7 +6,6 @@
         <result column="name" property="name"/>
         <result column="address" property="address"/>
         <result column="birth" property="birth"/>
-        <result column="birth" property="number"/>
         <result column="create_time" property="createTime"/>
     </resultMap>
 
