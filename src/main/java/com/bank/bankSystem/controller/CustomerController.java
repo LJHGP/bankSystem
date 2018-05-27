@@ -32,11 +32,17 @@ public class CustomerController {
     @PostMapping("/signIn")
     public Result<Account> signIn(@RequestBody SignInModel signInModel) {
         Credit credit = creditMapper.findByName(signInModel.getName());
+        if (credit == null) {
+            return new Result<>(Result.ReturnValue.FAILURE, "your credit score is not exist");
+        }
         if (credit.getScore() >= 80) {
             Account account = accountService.createAccount(signInModel);
+            if (account == null) {
+                return new Result<>(Result.ReturnValue.FAILURE, "system error");
+            }
             return new Result<>(Result.ReturnValue.SUCCESS, "", account);
         } else {
-            return new Result<>(Result.ReturnValue.FAILURE, "your credit score is not enough");
+            return new Result<>(Result.ReturnValue.FAILURE, "your credit score must be greater than 80");
         }
     }
 

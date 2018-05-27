@@ -10,6 +10,7 @@ import com.bank.bankSystem.service.AccountService;
 import com.bank.bankSystem.util.PinUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -17,6 +18,7 @@ import java.util.UUID;
 
 
 @Service
+@Transactional
 public class AccountServiceImpl implements AccountService {
 
 
@@ -31,6 +33,10 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account createAccount(SignInModel signInModel) {
+        String accountNumber = sequenceMapper.getNextAccountNumber();
+        if (accountNumber == null) {
+            return null;
+        }
         Customer customer = customerMapper.findByName(signInModel.getName());
         if (customer == null) {
             customer = new Customer();
@@ -42,7 +48,6 @@ public class AccountServiceImpl implements AccountService {
             customerMapper.insert(customer);
         }
         Account account = new Account();
-        String accountNumber = sequenceMapper.getNextAccountNumber();
         String pinNumber = PinUtil.createPinNumber();
         account.setCustomerId(customer.getId());
         account.setId(UUID.randomUUID().toString());

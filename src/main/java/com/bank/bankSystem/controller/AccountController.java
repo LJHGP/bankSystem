@@ -31,6 +31,18 @@ public class AccountController {
     private RecordMapper recordMapper;
 
 
+    @GetMapping("/query")
+    public Result<Account> query(@RequestHeader(value = "token") String token) {
+        HttpSession session = SessionStore.getInstance().getSession(token);
+        String number = (String) session.getAttribute(Account.SESSION_ATTR);
+        Account account = accountMapper.findByNumber(number);
+        if (account == null) {
+            return new Result<>(Result.ReturnValue.FAILURE, "your account is not exist");
+        }
+        return new Result<>(Result.ReturnValue.FAILURE, "", account);
+    }
+
+
     @PostMapping("/withdraw")
     public Result<Account> withdraw(@RequestBody FundsModel drawFunds, @RequestHeader(value = "token") String token) {
         HttpSession session = SessionStore.getInstance().getSession(token);
@@ -40,14 +52,14 @@ public class AccountController {
             return new Result<>(Result.ReturnValue.FAILURE, "your account is not exist");
         }
         if (Objects.equals(account.getType(), Account.Type.JUNIOR.name()) && drawFunds.getAmount().doubleValue() > 100) {
-            return new Result<>(Result.ReturnValue.FAILURE, "your account can not negative balance");
+            return new Result<>(Result.ReturnValue.FAILURE, Account.Type.JUNIOR.name() + " account Withdrawal does not exceed 100 Euro");
 
         }
         if (Objects.equals(account.getType(), Account.Type.SAVER.name()) && drawFunds.getAmount().doubleValue() > 200) {
-            return new Result<>(Result.ReturnValue.FAILURE, "your account can not negative balance");
+            return new Result<>(Result.ReturnValue.FAILURE, Account.Type.SAVER.name() + " account Withdrawal does not exceed 200 Euro");
         }
         if (Objects.equals(account.getType(), Account.Type.CURRENT.name()) && drawFunds.getAmount().doubleValue() > 300) {
-            return new Result<>(Result.ReturnValue.FAILURE, "your account can not negative balance");
+            return new Result<>(Result.ReturnValue.FAILURE, Account.Type.CURRENT.name() + " account Withdrawal does not exceed 300 Euro");
         }
         if (Objects.equals(account.getType(), Account.Type.JUNIOR.name()) || Objects.equals(account.getType(), Account.Type.SAVER.name())) {
             if (drawFunds.getAmount().doubleValue() > account.getBalance().doubleValue()) {
@@ -55,16 +67,16 @@ public class AccountController {
             }
         }
         if (Objects.equals(account.getType(), Account.Type.CURRENT.name())) {
-            if ((account.getBalance().divide(drawFunds.getAmount())).doubleValue() < -100) {
-                return new Result<>(Result.ReturnValue.FAILURE, "your account can not exceeding overdraft limit");
+            if ((account.getBalance().subtract(drawFunds.getAmount())).doubleValue() < -100) {
+                return new Result<>(Result.ReturnValue.FAILURE, "your account can not exceeding overdraft limit 100 Euro");
             }
         }
-        account.setBalance(account.getBalance().divide(drawFunds.getAmount()));
+        account.setBalance(account.getBalance().subtract(drawFunds.getAmount()));
         accountMapper.update(account);
         Record record = new Record();
         record.setId(UUID.randomUUID().toString());
         record.setAmount(drawFunds.getAmount());
-        record.setNumber(drawFunds.getAccountNumber());
+        record.setNumber(number);
         record.setType(Record.Type.withdraw.name());
         record.setCreateTime(new Date());
         recordMapper.insert(record);
@@ -85,7 +97,7 @@ public class AccountController {
         Record record = new Record();
         record.setId(UUID.randomUUID().toString());
         record.setAmount(drawFunds.getAmount());
-        record.setNumber(drawFunds.getAccountNumber());
+        record.setNumber(number);
         record.setType(Record.Type.deposited.name());
         record.setCreateTime(new Date());
         recordMapper.insert(record);
@@ -100,12 +112,12 @@ public class AccountController {
         if (account == null) {
             return new Result<>(Result.ReturnValue.FAILURE, "your account is not exist");
         }
-        account.setUnClearedBalance(account.getBalance().add(drawFunds.getAmount()));
+        account.setUnClearedBalance(account.getUnClearedBalance().add(drawFunds.getAmount()));
         accountMapper.update(account);
         Record record = new Record();
         record.setId(UUID.randomUUID().toString());
         record.setAmount(drawFunds.getAmount());
-        record.setNumber(drawFunds.getAccountNumber());
+        record.setNumber(number);
         record.setType(Record.Type.cheque.name());
         record.setCreateTime(new Date());
         recordMapper.insert(record);
@@ -114,20 +126,21 @@ public class AccountController {
 
 
     @PostMapping("/clearFounds")
-    public Result<Account> clearFounds(@RequestParam FundsModel drawFunds, @RequestHeader(value = "token") String token) {
+    public Result<Account> clearFounds(@RequestHeader(value = "token") String token) {
         HttpSession session = SessionStore.getInstance().getSession(token);
         String number = (String) session.getAttribute(Account.SESSION_ATTR);
         Account account = accountMapper.findByNumber(number);
         if (account == null) {
             return new Result<>(Result.ReturnValue.FAILURE, "your account is not exist");
         }
+        BigDecimal unClearedBalance = account.getUnClearedBalance();
         account.setBalance(account.getBalance().add(account.getUnClearedBalance()));
         account.setUnClearedBalance(BigDecimal.ZERO);
         accountMapper.update(account);
         Record record = new Record();
         record.setId(UUID.randomUUID().toString());
-        record.setAmount(drawFunds.getAmount());
-        record.setNumber(drawFunds.getAccountNumber());
+        record.setAmount(unClearedBalance);
+        record.setNumber(number);
         record.setType(Record.Type.clear_Founds.name());
         record.setCreateTime(new Date());
         recordMapper.insert(record);
@@ -135,7 +148,7 @@ public class AccountController {
     }
 
     @PostMapping("/close")
-    public Result<Account> close(@RequestBody FundsModel drawFunds, @RequestHeader(value = "token") String token) {
+    public Result<Account> close(@RequestHeader(value = "token") String token) {
         HttpSession session = SessionStore.getInstance().getSession(token);
         String number = (String) session.getAttribute(Account.SESSION_ATTR);
         Account account = accountMapper.findByNumber(number);
@@ -151,16 +164,12 @@ public class AccountController {
     }
 
     @PostMapping("/unSuspended")
-    public Result<Account> unSuspended(@RequestBody FundsModel drawFunds) {
-        Account account = accountMapper.findByNumber(drawFunds.getAccountNumber());
+    public Result<Account> unSuspended(@RequestHeader(value = "token") String token) {
+        HttpSession session = SessionStore.getInstance().getSession(token);
+        String number = (String) session.getAttribute(Account.SESSION_ATTR);
+        Account account = accountMapper.findByNumber(number);
         if (account == null) {
             return new Result<>(Result.ReturnValue.FAILURE, "your account is not exist");
-        }
-        if (!Objects.equals(account.getPin(), drawFunds.getPin())) {
-            return new Result<>(Result.ReturnValue.FAILURE, "your pin is wrong");
-        }
-        if (account.getBalance().doubleValue() != 0) {
-            return new Result<>(Result.ReturnValue.FAILURE, "your balance is not cleared");
         }
         account.setStatus(Account.Status.NORMAL.name());
         accountMapper.update(account);
