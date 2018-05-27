@@ -11,6 +11,10 @@ spring:
      cache: false
      model: HTML5
      encoding: UTF-8
+  mvc:
+    view:
+      suffix: .html
+      prefix: /
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss  #设置json返回日期格式
     timeZone: GMT+8   				#设置时区,否则可能前台返回时间与数据库不一致
@@ -19,3 +23,5 @@ mybatis:
     mapperLocations: classpath:mapper/*.xml  
     typeAliasesPackage: com.bank.bankSystem.domain
     config-locations: classpath:mybatis-conf.xml
+
+

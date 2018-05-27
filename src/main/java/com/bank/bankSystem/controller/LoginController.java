@@ -7,6 +7,7 @@ import com.bank.bankSystem.model.Result;
 import com.bank.bankSystem.session.SessionStore;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,7 +20,7 @@ import java.util.Objects;
  * @author admin
  * @create 2018-05-26 13:47
  **/
-@RestController
+@Controller
 @RequestMapping("/api/login")
 @Api(description = "login")
 public class LoginController {
@@ -27,10 +28,10 @@ public class LoginController {
     @Autowired
     private AccountMapper accountMapper;
 
-    @PostMapping("/login")
-    public Result<String> login(HttpServletRequest request, @RequestBody LoginModel loginModel) {
+    @RequestMapping("/login")
+    public String login() {
 
-        Account account = accountMapper.findByNumber(loginModel.getAccountNumber());
+        /*Account account = accountMapper.findByNumber(loginModel.getAccountNumber());
         if (account == null) {
             return new Result<>(Result.ReturnValue.FAILURE, "your account is not exist");
         }
@@ -39,8 +40,8 @@ public class LoginController {
         }
         HttpSession session = request.getSession();
         session.setAttribute(Account.SESSION_ATTR, loginModel.getAccountNumber());
-        SessionStore.getInstance().addUser(session.getId(), session);
-        return new Result<>(Result.ReturnValue.SUCCESS, "", session.getId());
+        SessionStore.getInstance().addUser(session.getId(), session);*/
+        return "/index";
     }
 
     @PostMapping("/logout")

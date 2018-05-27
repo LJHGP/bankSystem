@@ -29,12 +29,6 @@
                     }
                 } ]
             });
-            
-            /*目的是，如果已经登陆过了，那么刷新页面后也不需要弹出登录窗体*/
-    /*         var sessionInfo_userId = '${sessionInfo.id}';
-            if (sessionInfo_userId) {
-                loginDialog.dialog('close');
-            }  */
 
             $('#loginDialog input').keyup(function(event) {
                 if (event.keyCode == '13') {
@@ -81,7 +75,6 @@
             <h1>银行系统</h1>
         </div>
     </div>
-
 </div>
 </body>
 </html>
