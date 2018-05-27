@@ -25,7 +25,6 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
     public boolean preHandle(HttpServletRequest request,
                              HttpServletResponse response, Object handler) throws Exception {
         if (!(handler instanceof HandlerMethod)) {
-            response.setStatus(HttpStatus.FORBIDDEN.value());
             return true;
         }
         String token = request.getHeader("token");
