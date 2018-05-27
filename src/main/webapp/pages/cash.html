@@ -24,12 +24,12 @@
 
                     <tr>
                         <td>密码:</td>
-                        <td><input class="easyui-textbox" type="password" name="pwd"
+                        <td><input class="easyui-textbox" type="password" name="pin"
                                    data-options="required:true,validType:'password'"></input></td>
                     </tr>
                     <tr>
                         <td>金额:</td>
-                        <td><input class="easyui-textbox" type="text" name="age"
+                        <td><input class="easyui-textbox" type="text" name="amount"
                                    data-options="required:true,validType:'number'"></input></td>
                     </tr>
                 </table>
@@ -110,7 +110,7 @@
             pageList: [3, 6, 12],//选择条数
             fit: true,//大自动适应
             selectOnCheck: true,//如果设置为true，单击一个复选框，将始终选择行。如果为false，不会选择行选中该复选框。
-            loadMsg: "正在加载员工（职员）数据，请稍等...",
+            loadMsg: "请稍等...",
             fitColumn: false, //列自适应宽度
             /* 			width : 'auto',
              height : 'auto', */
@@ -153,6 +153,7 @@
 
         //存款
         $('#depositBtn').click(function () {
+            alert("depositCommit");
             depositCommit();
         });
         //取款
@@ -173,9 +174,9 @@
     }
     /* 存款提交 */
     function depositCommit() {
-
+        alert(1111);
         $('#depositForm').form('submit', {
-            url: "adduser",
+            url: "/api/account/deposited",
             onSubmit: function () { //表单提交前的回调函数
                 var isValid = $(this).form('validate');//验证表单中的一些控件的值是否填写正确，比如某些文本框中的内容必须是数字
                 if (!isValid) {
@@ -187,24 +188,9 @@
             },
 
             success: function (data) { //表单提交成功后的回调函数，里面参数data是我们调用/BasicClass/ModifyClassInfo方法的返回值。
-                /* alert("进入成功方法"); */
-                if (data > 0) {
-                    console.info(data);
-                    $.messager.show({
-                        title: '提示消息',
-                        msg: '提交成功',
-                        showType: 'show',
-                        timeout: 1000,
-                        style: {
-                            right: '',
-                            bottom: ''
-                        }
-                    });
-                    $('#yglb').datagrid('reload'); // 重新载入当前页面数据
-                    $("#addUser").dialog('close'); //关闭窗口
-                } else {
-                    $.messager.alert('提示信息', '提交失败，请联系管理员！', 'warning');
-                }
+               alert("success");
+                $.messager.alert('提示信息', '提交失败，请联系管理员！', 'warning');
+
             }
         });
     }
