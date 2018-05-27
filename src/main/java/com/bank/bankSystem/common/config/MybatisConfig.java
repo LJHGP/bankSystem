@@ -1,9 +1,5 @@
 package com.bank.bankSystem.common.config;
 
-import com.github.pagehelper.PageHelper;
-
-import java.util.Properties;
-
 /**
  *  mybatis 分页插件
  * @author admin
@@ -11,7 +7,7 @@ import java.util.Properties;
  **/
 public class MybatisConfig {
 
-    public PageHelper pageHelper(){
+  /*  public PageHelper pageHelper(){
         PageHelper pageHelper = new PageHelper();
         Properties properties = new Properties();
         properties.setProperty("offsetAsPageNum","true");
@@ -20,6 +16,6 @@ public class MybatisConfig {
         properties.setProperty("dialect","mysql");
         pageHelper.setProperties(properties);
         return pageHelper;
-    }
+    }*/
 
 }
