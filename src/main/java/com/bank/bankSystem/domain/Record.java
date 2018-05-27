@@ -8,6 +8,8 @@ public class Record {
 
     private String id;
 
+    private String number;
+
     private String type;
 
     private BigDecimal amount;
@@ -46,37 +48,15 @@ public class Record {
         this.createTime = createTime;
     }
 
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Record record = (Record) o;
-
-        if (id != null ? !id.equals(record.id) : record.id != null) return false;
-        if (type != null ? !type.equals(record.type) : record.type != null) return false;
-        if (amount != null ? !amount.equals(record.amount) : record.amount != null) return false;
-        return createTime != null ? createTime.equals(record.createTime) : record.createTime == null;
+    public String getNumber() {
+        return number;
     }
 
-    @Override
-    public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (type != null ? type.hashCode() : 0);
-        result = 31 * result + (amount != null ? amount.hashCode() : 0);
-        result = 31 * result + (createTime != null ? createTime.hashCode() : 0);
-        return result;
+    public void setNumber(String number) {
+        this.number = number;
     }
 
-
-    @Override
-    public String toString() {
-        return "Record{" +
-                "id='" + id + '\'' +
-                ", type='" + type + '\'' +
-                ", amount=" + amount +
-                ", createTime=" + createTime +
-                '}';
+    public enum Type {
+        withdraw, deposited, cheque, clear_Founds;
     }
 }

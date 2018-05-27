@@ -1,4 +1,37 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.bank.bankSystem.mapper.AccountMapper">
+
+
+    <resultMap id="accountResultMap" type="com.bank.bankSystem.domain.Account">
+        <id column="id" property="id"/>
+        <result column="customer_id" property="customerId"/>
+        <result column="type" property="type"/>
+        <result column="status" property="status"/>
+        <result column="number" property="number"/>
+        <result column="pin" property="pin"/>
+        <result column="balance" property="balance"/>
+        <result column="un_cleared_balance" property="unClearedBalance"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+
+    <insert id="insert" parameterType="com.bank.bankSystem.domain.Account">
+        INSERT INTO `account`
+        (`id`, `customer_id`, `type`, `status`, `number`, `pin`, `balance`, `un_cleared_balance`, `create_time`)
+        VALUES
+        (#{id}, #{customerId}, #{type}, #{status}, #{number}, #{pin}, #{balance}, #{unClearedBalance}, #{createTime})
+    </insert>
+
+
+    <select id="findByNumber" parameterType="java.lang.String" resultMap="accountResultMap">
+        SELECT * FROM `account` WHERE `number` = #{number}
+    </select>
+
+    <update id="update" parameterType="com.bank.bankSystem.domain.Account">
+        UPDATE account SET customer_id = #{customerId},`type` = #{type},status = #{status},`number` = #{number},
+        pin = #{pin},balance = #{balance},un_cleared_balance = #{unClearedBalance},create_time = #{createTime}
+    </update>
+
+
 </mapper>

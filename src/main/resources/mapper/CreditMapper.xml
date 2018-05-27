@@ -1,4 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.bank.bankSystem.mapper.CreditMapper">
+
+
+    <resultMap id="creditResultMap" type="com.bank.bankSystem.domain.Credit">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="score" property="score"/>
+    </resultMap>
+
+
+    <select id="findByName" parameterType="java.lang.String" resultMap="creditResultMap">
+        SELECT * FROM credit WHERE `name` = #{name}
+    </select>
+
+
 </mapper>

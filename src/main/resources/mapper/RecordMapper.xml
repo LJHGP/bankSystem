@@ -1,4 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.bank.bankSystem.mapper.RecordMapper">
+
+    <resultMap id="recordResultMap" type="com.bank.bankSystem.domain.Record">
+        <id column="id" property="id"/>
+        <result column="number" property="number"/>
+        <result column="type" property="type"/>
+        <result column="amount" property="amount"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.bank.bankSystem.domain.Record">
+        INSERT INTO record (`id`, `number`,`type`, `amount`, `create_time`) VALUES
+        (#{id},#{number},#{type},#{amount},#{createTime})
+    </insert>
+
+    <select id="findAll" parameterType="java.lang.String" resultMap="recordResultMap">
+        SELECT * FROM record WHERE `number` = #{number} ORDER BY create_time
+    </select>
 </mapper>

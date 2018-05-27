@@ -6,6 +6,7 @@ import java.util.Date;
 
 public class Account {
 
+    public static final String SESSION_ATTR = "number";
 
     private String id;
 
@@ -97,7 +98,6 @@ public class Account {
         this.createTime = createTime;
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -131,7 +131,6 @@ public class Account {
         return result;
     }
 
-
     @Override
     public String toString() {
         return "Account{" +
@@ -145,5 +144,15 @@ public class Account {
                 ", unClearedBalance=" + unClearedBalance +
                 ", createTime=" + createTime +
                 '}';
+    }
+
+    public enum Status {
+        NORMAL, CLOSED, SUSPENDED;
+    }
+
+
+    public enum Type {
+        SAVER, JUNIOR, CURRENT;
+
     }
 }

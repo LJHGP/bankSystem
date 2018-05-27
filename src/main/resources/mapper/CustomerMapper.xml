@@ -1,4 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.bank.bankSystem.mapper.CustomerMapper">
+    <resultMap id="customerResultMap" type="com.bank.bankSystem.domain.Customer">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="address" property="address"/>
+        <result column="birth" property="birth"/>
+        <result column="birth" property="number"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+
+    <select id="findByName" parameterType="java.lang.String" resultMap="customerResultMap">
+        SELECT * FROM customer WHERE `name` = #{name}
+    </select>
+
+    <insert id="insert" parameterType="com.bank.bankSystem.domain.Customer">
+        INSERT INTO customer (`id`, `name`, `address`, `birth`, `create_time`) VALUE
+        (#{id},#{name},#{address},#{birth},#{createTime})
+    </insert>
 </mapper>

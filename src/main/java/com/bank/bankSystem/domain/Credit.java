@@ -7,8 +7,7 @@ public class Credit {
 
     private String name;
 
-    private String score;
-
+    private Integer score;
 
     public String getId() {
         return id;
@@ -26,14 +25,13 @@ public class Credit {
         this.name = name;
     }
 
-    public String getScore() {
+    public Integer getScore() {
         return score;
     }
 
-    public void setScore(String score) {
+    public void setScore(Integer score) {
         this.score = score;
     }
-
 
     @Override
     public boolean equals(Object o) {
@@ -55,13 +53,12 @@ public class Credit {
         return result;
     }
 
-
     @Override
     public String toString() {
         return "Credit{" +
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
-                ", score='" + score + '\'' +
+                ", score=" + score +
                 '}';
     }
 }
