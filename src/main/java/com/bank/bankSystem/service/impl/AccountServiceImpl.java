@@ -32,7 +32,7 @@ public class AccountServiceImpl implements AccountService {
     private CustomerMapper customerMapper;
 
     @Override
-    public Account createAccount(SignInModel signInModel) {
+    public String createAccount(SignInModel signInModel) {
         String accountNumber = sequenceMapper.getNextAccountNumber();
         if (accountNumber == null) {
             return null;
@@ -58,7 +58,20 @@ public class AccountServiceImpl implements AccountService {
         account.setUnClearedBalance(BigDecimal.ZERO);
         account.setBalance(BigDecimal.ZERO);
         account.setCreateTime(new Date());
-        accountMapper.insert(account);
-        return account;
+        String returnStr = "registry success! account:" + accountNumber + ";password:" + pinNumber;
+        try {
+            accountMapper.insert(account);
+        }catch (Exception e){
+            returnStr = null;
+        }
+
+        return returnStr;
     }
+
+    @Override
+    public Account findByNumber(String number) {
+        return accountMapper.findByNumber(number);
+    }
+
+
 }

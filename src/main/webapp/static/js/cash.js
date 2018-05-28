@@ -1,7 +1,6 @@
 $(function () {
-    alert();
-    $('#yglb').datagrid({
-        url: "/yglb",
+    $('#cashDatagrid').datagrid({
+        url: "/api/account/recordList",
         title: "操作记录列表",
         pagination: true,// 是否分页
         pageSize: 12,//条数
@@ -19,21 +18,21 @@ $(function () {
         rownumbers: true,
         columns: [[{
             title: '类型',
-            field: 'name',
+            field: 'type',
             width : fixWidth(0.2)
         }, {
-            title: '操作者',
-            field: 'pwd',
+            title: '操作账户',
+            field: 'number',
             align: 'center',
             width : fixWidth(0.2)
         }, {
             title: '操作时间',
-            field: 'age',
+            field: 'createTime',
             align: "center",
             width : fixWidth(0.2)
         }, {
             title: '金额',
-            field: 'sex',
+            field: 'amount',
             width : fixWidth(0.2)
         }]],
 
@@ -51,17 +50,28 @@ $(function () {
 
     //存款
     $('#depositBtn').click(function () {
-        alert("depositCommit");
         depositCommit();
+    });
+
+    $('#depositResetBtn').click(function () {
+        $("#deposit").dialog('close');
     });
     //取款
     $('#drawBtn').click(function () {
         drawCommit();
     });
+
+    $('#drawResetBtn').click(function () {
+        $("#draw").dialog('close');
+    });
     //清理资金
-    $('#clearCashBtn').click(function () {
+    $('#clearCashAmount').click(function () {
         clearCashCommit();
     })
+
+    $('#clearCashResetBtn').click(function () {
+        $("#clearCash").dialog('close');
+    });
 
 });
 
@@ -72,21 +82,41 @@ function depositOpen() {
 }
 /* 存款提交 */
 function depositCommit() {
+    var depositType = $("#depositType").val();
+    var pidDeposit = $("#pidDeposit").val();
+    var depositAmount = $("#depositAmount").val();
+    if(!depositType){
+        $.messager.alert('系统提示',"类型不能为空", 'info');
+        return;
+    }
+    if(!pidDeposit){
+        $.messager.alert('系统提示',"密码不能为空", 'info');
+        return;
+    }
+    if(!depositAmount){
+        $.messager.alert('系统提示',"金额不能为空", 'info');
+        return;
+    }
     $.ajax({
         type : "POST",
         url : '/api/account/deposited',
-        contentType:"application/json;charset=utf-8",
-        headers: {
-            token: "0"
-        },
         data : {
-            amount : "1111"
+            "depositType":depositType,
+            "pid":pidDeposit,
+            "amount":depositAmount
         },
         success : function(result) {
-            alert("11222");
+            if(result.returnValue == 'SUCCESS'){
+                $.messager.alert('系统提示',"操作成功", 'info');
+                $('#depositForm').form('clear');
+                $("#deposit").dialog('close');
+            }else{
+                $.messager.alert('系统提示',result.reason, 'error');
+            }
+
         },
         error : function(err) {
-            alert("111333111");
+            $.messager.alert('系统提示',"操作失败", 'error');
         }
     });
 }
@@ -98,89 +128,92 @@ function drawOpen() {
 
 /* 取款提交 */
 function drawCommit() {
-    console.info("进入修改页面提交数据");
-    $('#drawForm').form('submit', {
-        url: "udpuser",
-        onSubmit: function () { //表单提交前的回调函数
-            var isValid = $(this).form('validate');//验证表单中的一些控件的值是否填写正确，比如某些文本框中的内容必须是数字
-            if (!isValid) {
-
-            }
-            console.info(isValid);
-            return isValid; // 如果验证不通过，返回false终止表单提交
-            /*   alert("进入回调函数"); */
+    var drawPid = $("#drawPid").val();
+    var drawAmount = $("#drawAmount").val();
+    if(!drawAmount){
+        $.messager.alert('系统提示',"金额不能为空", 'info');
+        return;
+    }
+    if(!drawPid){
+        $.messager.alert('系统提示',"密码不能为空", 'info');
+        return;
+    }
+    $.ajax({
+        type : "POST",
+        url : '/api/account/withdraw',
+        data : {
+            "pid":drawPid,
+            "amount" : drawAmount
         },
-
-        success: function (data) { //表单提交成功后的回调函数，里面参数data是我们调用/BasicClass/ModifyClassInfo方法的返回值。
-            console.info(data);
-
-            if (data == 0) {
-                console.info(data);
-                $("#updUser").dialog('close'); //关闭窗口
-                $.messager.show({
-                    title: '提示消息',
-                    msg: '提交成功',
-                    showType: 'show',
-                    timeout: 1000,
-                    style: {
-                        right: '',
-                        bottom: ''
-                    }
-                });
-                $('#yglb').datagrid('reload'); // 重新载入当前页面数据
-
-            } else {
-                $.messager.alert('提示信息', '提交失败，请联系管理员！', 'warning');
-            }
+        success : function(result) {
+            reload();
+            $.messager.alert('系统提示',"操作成功", 'info');
+            $('#drawForm').form('clear');
+            $("#draw").dialog('close');
+        },
+        error : function(err) {
+            $.messager.alert('系统提示',"操作失败", 'error');
         }
     });
 };
 
 /* 清理资金 */
 function clearCashOpen() {
-    $('#clearCashForm').form('clear');
-    $("#clearCash").dialog('open');
+    $.ajax({
+        type : "POST",
+        url : '/api/account/clearFoundsAmount',
+        success : function(result) {
+            if(result.data && result.data > 0){
+
+                $('#clearCashForm').form('clear');
+                $("#clearCash").dialog('open');
+                $("#clearCashAmount").text(result.data + "元");
+            }else{
+                $.messager.alert('系统提示',"当前暂无待清理资金", 'info');
+            }
+        },
+        error : function(err) {
+            $.messager.alert('系统提示',"系统错误", 'error');
+        }
+    });
 };
 
 /* 清理资金提交 */
 function clearCashCommit() {
-    console.info("进入修改页面提交数据");
-    $('#clearCashForm').form('submit', {
-        url: "udpuser",
-        onSubmit: function () { //表单提交前的回调函数
-            var isValid = $(this).form('validate');//验证表单中的一些控件的值是否填写正确，比如某些文本框中的内容必须是数字
-            if (!isValid) {
-
-            }
-            console.info(isValid);
-            return isValid; // 如果验证不通过，返回false终止表单提交
-            /*   alert("进入回调函数"); */
+    var clearCashPid = $("#clearCashPid").val();
+    var clearCashAmount = $("#clearCashAmount").val();
+    if(!clearCashAmount){
+        $.messager.alert('系统提示',"金额不能为空", 'info');
+        return;
+    }
+    if(!clearCashPid){
+        $.messager.alert('系统提示',"密码不能为空", 'info');
+        return;
+    }
+    $.ajax({
+        type : "POST",
+        url : '/api/account/clearFounds',
+        data : {
+            "pid":clearCashPid,
+            "amount" : clearCashAmount
         },
-
-        success: function (data) { //表单提交成功后的回调函数，里面参数data是我们调用/BasicClass/ModifyClassInfo方法的返回值。
-            console.info(data);
-
-            if (data == 0) {
-                console.info(data);
-                $("#updUser").dialog('close'); //关闭窗口
-                $.messager.show({
-                    title: '提示消息',
-                    msg: '提交成功',
-                    showType: 'show',
-                    timeout: 1000,
-                    style: {
-                        right: '',
-                        bottom: ''
-                    }
-                });
-                $('#yglb').datagrid('reload'); // 重新载入当前页面数据
-
-            } else {
-                $.messager.alert('提示信息', '提交失败，请联系管理员！', 'warning');
-            }
+        success : function(result) {
+            reload();
+            $.messager.alert('系统提示',"操作成功", 'info');
+            $('#clearCashForm').form('clear');
+            $("#clearCash").dialog('close');
+        },
+        error : function(err) {
+            $.messager.alert('系统提示',"操作失败", 'error');
         }
     });
 };
+
+function reload(){
+    $("#cashDatagrid").datagrid('reload');
+}
+
+
 function retUser() {
     $('#xzUser').window('open');
 }

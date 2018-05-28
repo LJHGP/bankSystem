@@ -28,9 +28,15 @@
         SELECT * FROM `account` WHERE `number` = #{number}
     </select>
 
+    <select id="findUserInfo" parameterType="java.lang.String" resultType="com.bank.bankSystem.model.UserInfo">
+        select * from account a LEFT JOIN customer c on (c.id = a.customer_id)
+        WHERE `number` = #{number}
+    </select>
+
     <update id="update" parameterType="com.bank.bankSystem.domain.Account">
         UPDATE account SET customer_id = #{customerId},`type` = #{type},status = #{status},`number` = #{number},
         pin = #{pin},balance = #{balance},un_cleared_balance = #{unClearedBalance},create_time = #{createTime}
+        where `number` = #{number}
     </update>
 
 

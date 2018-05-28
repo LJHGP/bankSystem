@@ -1,10 +1,8 @@
 $(function () {
     $('#userDatagrid').datagrid({
-        url: "/yglb",
+        url: "/api/account/accountList",
         title: "用户列表",
         pagination: true,// 是否分页
-        pageSize: 12,//条数
-        pageList: [3, 6, 12],//选择条数
         fit: true,//大自动适应
         selectOnCheck: true,//如果设置为true，单击一个复选框，将始终选择行。如果为false，不会选择行选中该复选框。
         loadMsg: "正在加载用户数据，请稍等...",
@@ -14,36 +12,49 @@ $(function () {
         columns: [[{
             title: '姓名',
             field: 'name',
-            width : fixWidth(0.2)
+            width : fixWidth(0.15)
         }, {
-            title: '性别',
-            field: 'pwd',
+            title: '地址',
+            field: 'address',
             align: 'center',
-            width : fixWidth(0.1)
+            width : fixWidth(0.15)
         }, {
-            title: '开户时间',
-            field: 'age',
-            align: "center",
-            width : fixWidth(0.2)
-        }, {
-            title: '余额',
-            field: 'age',
+            title: '生日',
+            field: 'birth',
             align: "center",
             width : fixWidth(0.1)
         }, {
+            title: '账户类型',
+            field: 'type',
+            align: "center",
+            width : fixWidth(0.1)
+        }, {
+            title: "余额",
+            field: 'balance',
+            align: "center",
+            width : fixWidth(0.1)
+        },{
+            title: "待清理资金",
+            field: 'unClearedBalance',
+            align: "center",
+            width : fixWidth(0.1)
+        },{
             title: '操作',
             field: 'sex',
             width : fixWidth(0.2),
-            formatter : operationFormater
+            formatter: function(value,row,index){
+                alert(row);
+                return operationFormater(row)
+            }
         }]],
 
-        toolbar: '#tb',
+
         onLoadSuccess: function () {
 
         }
     });
 
-    function operationFormater(){
+    function operationFormater(row){
         var btnGroup = '<span class="easyui-linkbutton" onclick="release(\''
             + row.id
             + '\')">发布</span>'

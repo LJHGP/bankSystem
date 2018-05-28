@@ -18,4 +18,8 @@
     <select id="findAll" parameterType="java.lang.String" resultMap="recordResultMap">
         SELECT * FROM record WHERE `number` = #{number} ORDER BY create_time
     </select>
+
+    <select id="findAllByName" parameterType="java.lang.String" resultMap="recordResultMap">
+        SELECT * FROM record WHERE `number` = #{number} ORDER BY create_time
+    </select>
 </mapper>

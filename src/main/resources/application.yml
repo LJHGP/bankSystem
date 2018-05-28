@@ -3,7 +3,7 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver  
     username: root  
     password: root
-    url: jdbc:mysql://39.107.234.182:3306/banking_system?useUnicode=true&characterEncoding=UTF8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&transformedBitIsBoolean=true&useSSL=false&serverTimezone=UTC
+    url: jdbc:mysql://39.107.234.182:32769/banking_system?useUnicode=true&characterEncoding=UTF8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&transformedBitIsBoolean=true&useSSL=false&serverTimezone=UTC
     type: com.alibaba.druid.pool.DruidDataSource
   thymeleaf:
      prefix: classpath:/templates/

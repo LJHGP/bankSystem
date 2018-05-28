@@ -152,7 +152,8 @@ public class Account {
 
 
     public enum Type {
-        SAVER, JUNIOR, CURRENT;
+        JUNIOR,SAVER,CURRENT;
 
     }
+
 }

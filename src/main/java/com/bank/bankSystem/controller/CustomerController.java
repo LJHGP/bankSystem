@@ -31,20 +31,27 @@ public class CustomerController {
 
 
     @RequestMapping("/signIn")
+    @ResponseBody
     public Result<Account> signIn(SignInModel signInModel) {
-        Credit credit = creditMapper.findByName(signInModel.getName());
-        if (credit == null) {
-            return new Result<>(Result.ReturnValue.FAILURE, "your credit score is not exist");
-        }
-        if (credit.getScore() >= 80) {
-            Account account = accountService.createAccount(signInModel);
-            if (account == null) {
-                return new Result<>(Result.ReturnValue.FAILURE, "system error");
+        Customer customer = customerMapper.findByName(signInModel.getName());
+        if(customer == null){
+            Credit credit = creditMapper.findByName(signInModel.getName());
+            if (credit == null) {
+                return new Result<>(Result.ReturnValue.FAILURE, "your credit score is not exist");
             }
-            return new Result<>(Result.ReturnValue.SUCCESS, "", account);
-        } else {
-            return new Result<>(Result.ReturnValue.FAILURE, "your credit score must be greater than 80");
+            if (credit.getScore() >= 80) {
+                String accountNumber = accountService.createAccount(signInModel);
+                if (accountNumber == null) {
+                    return new Result<>(Result.ReturnValue.FAILURE, "system error");
+                }
+                return new Result(Result.ReturnValue.SUCCESS, "success! account:" + signInModel.getName() + ",password:" + accountNumber,"");
+            } else {
+                return new Result<>(Result.ReturnValue.FAILURE, "your credit score must be greater than 80");
+            }
+        }else{
+            return new Result<>(Result.ReturnValue.FAILURE, "your account exist");
         }
+
     }
 
 
@@ -56,6 +63,8 @@ public class CustomerController {
         }
         return new Result(Result.ReturnValue.SUCCESS);
     }
+
+
 
 
 }

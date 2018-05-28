@@ -1,6 +1,6 @@
 <div class="easyui-layout" data-options="fit:true">
     <div region="center">
-        <div id="yglb"></div>
+        <div id="cashDatagrid"></div>
         <!--datagrid上的工具条-->
         <div id="tb" style="padding: 5px; height: auto">
             <div style="margin-bottom: 5px" class="toolbar">
@@ -24,22 +24,32 @@
 
                     <tr>
                         <td>密码:</td>
-                        <td><input class="easyui-textbox" type="password" name="pin"
+                        <td><input class="easyui-textbox" id = "pidDeposit" type="password" name="pin"
                                    data-options="required:true,validType:'password'"></input></td>
                     </tr>
                     <tr>
+                        <td>类型:</td>
+                        <td>
+                            <select id="depositType" class="easyui-combobox" name="depositType" style="width:130px;" data-options="required:true,validType:'password'">
+                                <option value="cash">现金</option>
+                                <option value="check">票存</option>
+                            </select>
+
+                    </tr>
+                    <tr>
                         <td>金额:</td>
-                        <td><input class="easyui-textbox" type="text" name="amount"
+                        <td><input class="easyui-textbox" id = "depositAmount" type="text" name="amount"
                                    data-options="required:true,validType:'number'"></input></td>
                     </tr>
+
                 </table>
             </form>
 
             <div style="text-align: center; padding: 5px">
                 <a href="javascript:void(0)" class="easyui-linkbutton"
                    id="depositBtn" style="width: 100px;">提交</a> <a
-                    href="javascript:void(0)" class="easyui-linkbutton" id="resetBtn"
-                    style="width: 100px;">清空</a>
+                    href="javascript:void(0)" class="easyui-linkbutton" id="depositResetBtn"
+                    style="width: 100px;">关闭</a>
             </div>
         </div>
 
@@ -50,20 +60,20 @@
                     <tr>
                         <td>密码:</td>
                         <td><input class="easyui-textbox" type="password" name="pwd"
-                                   id="pwd" data-options="required:true,validType:'password'"></input></td>
+                                   id="drawPid" data-options="required:true,validType:'password'"></input></td>
                     </tr>
                     <tr>
                         <td>金额:</td>
                         <td><input class="easyui-textbox" type="text" name="age"
-                                   id="age" data-options="required:true,validType:'number'"></input></td>
+                                   id="drawAmount" data-options="required:true,validType:'number'"></input></td>
                     </tr>
                 </table>
             </form>
             <div style="text-align: center; padding: 5px">
                 <a href="javascript:void(0)" class="easyui-linkbutton"
                    id="drawBtn" style="width: 100px;">提交</a> <a
-                    href="javascript:void(0)" class="easyui-linkbutton" id="resetBtn2"
-                    style="width: 100px;">清空</a>
+                    href="javascript:void(0)" class="easyui-linkbutton" id="drawResetBtn"
+                    style="width: 100px;">关闭</a>
             </div>
 
         </div>
@@ -74,20 +84,19 @@
                     <tr>
                         <td>密码:</td>
                         <td><input class="easyui-textbox" type="password" name="pwd"
-                                   id="pwd1" data-options="required:true,validType:'password'"></input></td>
+                                   id="clearCashPid" data-options="required:true,validType:'password'"></input></td>
                     </tr>
                     <tr>
                         <td>待清理资金:</td>
-                        <td><input class="easyui-textbox" type="text" name="age"
-                                   id="age1" data-options="required:true,validType:'number'"></input></td>
+                        <td><span id="clearCashAmount"></span></td>
                     </tr>
                 </table>
             </form>
             <div style="text-align: center; padding: 5px">
                 <a href="javascript:void(0)" class="easyui-linkbutton"
                    id="clearCashBtn" style="width: 100px;">提交</a> <a
-                    href="javascript:void(0)" class="easyui-linkbutton" id="resetClearCash"
-                    style="width: 100px;">清空</a>
+                    href="javascript:void(0)" class="easyui-linkbutton" id="clearCashResetBtn"
+                    style="width: 100px;">关闭</a>
             </div>
 
         </div>

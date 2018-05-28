@@ -40,16 +40,13 @@ $(function() {
         //location.replace('/main');
         if ($('#form-body').form('validate')) {//validate方式，未使用form方式提交表单，该语句必须写
             $.post('/api/login/login', $('#form-body').serialize(), function(result) {
-                if (result.success) {
-                    if(result.success=='b'){
-                        $('#loginDialog').dialog('close');
-                        location.replace('/main');
-                        console.log(result);
-                    }else{
-                        $.messager.alert('错误', '用户名或密码出错', 'error');
-                    }
+                console.info(result);
+                if (result.returnValue == "SUCCESS") {
+                    $('#loginDialog').dialog('close');
+                    location.replace('/main');
+                    console.log(result);
                 } else {
-                    $.messager.alert('错误', '系统出错', 'error');
+                    $.messager.alert('错误',result.reason, 'error');
                 }
                 parent.$.messager.progress('close');
             }, "JSON");
@@ -65,9 +62,8 @@ function openAccountForm(){
 /* 开户 */
 function registryAccountAction() {
     var param = $('#registryAccountForm').serialize();
-    console.info(param);
-    alert(param);
     $.post('/api/customer/signIn',param, function(result) {
-        alert(result);
+        $("#registryAccount").dialog('close');
+        $.messager.alert('系统提示', result.reason, 'Info');
     }, "JSON");
 };
