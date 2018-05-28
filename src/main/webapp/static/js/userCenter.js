@@ -12,37 +12,37 @@ $(function () {
         columns: [[{
             title: '姓名',
             field: 'name',
-            width : fixWidth(0.15)
+            width: fixWidth(0.15)
         }, {
             title: '地址',
             field: 'address',
             align: 'center',
-            width : fixWidth(0.15)
+            width: fixWidth(0.15)
         }, {
             title: '生日',
             field: 'birth',
             align: "center",
-            width : fixWidth(0.1)
+            width: fixWidth(0.1)
         }, {
             title: '账户类型',
             field: 'type',
             align: "center",
-            width : fixWidth(0.1)
+            width: fixWidth(0.1)
         }, {
             title: "余额",
             field: 'balance',
             align: "center",
-            width : fixWidth(0.1)
-        },{
+            width: fixWidth(0.1)
+        }, {
             title: "待清理资金",
             field: 'unClearedBalance',
             align: "center",
-            width : fixWidth(0.1)
-        },{
+            width: fixWidth(0.1)
+        }, {
             title: '操作',
             field: 'sex',
-            width : fixWidth(0.2),
-            formatter: function(value,row,index){
+            width: fixWidth(0.2),
+            formatter: function (value, row, index) {
                 alert(row);
                 return operationFormater(row)
             }
@@ -51,10 +51,17 @@ $(function () {
 
         onLoadSuccess: function () {
 
+        },
+        onLoadError: function (err) {
+            if (err.status === 403) {
+                location.replace('/');
+            } else {
+                $.messager.alert('系统提示', "系统错误", 'error');
+            }
         }
     });
 
-    function operationFormater(row){
+    function operationFormater(row) {
         var btnGroup = '<span class="easyui-linkbutton" onclick="release(\''
             + row.id
             + '\')">发布</span>'

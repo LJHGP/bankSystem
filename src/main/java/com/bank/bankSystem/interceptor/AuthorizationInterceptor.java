@@ -3,6 +3,7 @@ package com.bank.bankSystem.interceptor;
 
 import com.bank.bankSystem.domain.Account;
 import com.bank.bankSystem.mapper.AccountMapper;
+import com.bank.bankSystem.model.LoginModel;
 import com.bank.bankSystem.session.SessionStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,22 +28,20 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
         if (!(handler instanceof HandlerMethod)) {
             return true;
         }
-        String token = request.getHeader("token");
-        if (token == null || token.trim().isEmpty()) {
-            response.setStatus(HttpStatus.FORBIDDEN.value());
-            return false;
-        }
+        String token = request.getSession().getId();
         HttpSession session = SessionStore.getInstance().getSession(token);
         if (Objects.isNull(session)) {
             response.setStatus(HttpStatus.FORBIDDEN.value());
             return false;
         }
-        String number = (String) session.getAttribute(Account.SESSION_ATTR);
-        if (number == null || number.trim().isEmpty()) {
+        LoginModel loginModel = (LoginModel) session.getAttribute(Account.SESSION_ATTR);
+        LoginModel requestLoginModel = (LoginModel) request.getSession().getAttribute(Account.SESSION_ATTR);
+        if (loginModel == null || loginModel.getAccountNumber() == null || requestLoginModel == null ||
+                loginModel.getAccountNumber().trim().isEmpty() || !Objects.equals(loginModel.getAccountNumber(), requestLoginModel.getAccountNumber())) {
             response.setStatus(HttpStatus.FORBIDDEN.value());
             return false;
         }
-        Account account = accountMapper.findByNumber(number);
+        Account account = accountMapper.findByNumber(loginModel.getAccountNumber());
         if (Objects.isNull(account)) {
             response.setStatus(HttpStatus.FORBIDDEN.value());
             return false;

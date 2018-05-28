@@ -7,7 +7,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 
-//@Configuration
+@Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
     @Autowired
@@ -17,7 +17,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(authorizationInterceptor).addPathPatterns("/**").excludePathPatterns("/api/customer/**", "/api/login/**",
-                "/swagger-resources/**", "/v2/api-docs", "/swagger**", "/error**");
+                "/swagger-resources/**", "/v2/api-docs", "/swagger**", "/error**","/main**");
     }
 
 

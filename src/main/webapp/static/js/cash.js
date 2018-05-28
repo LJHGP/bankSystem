@@ -19,26 +19,33 @@ $(function () {
         columns: [[{
             title: '类型',
             field: 'type',
-            width : fixWidth(0.2)
+            width: fixWidth(0.2)
         }, {
             title: '操作账户',
             field: 'number',
             align: 'center',
-            width : fixWidth(0.2)
+            width: fixWidth(0.2)
         }, {
             title: '操作时间',
             field: 'createTime',
             align: "center",
-            width : fixWidth(0.2)
+            width: fixWidth(0.2)
         }, {
             title: '金额',
             field: 'amount',
-            width : fixWidth(0.2)
+            width: fixWidth(0.2)
         }]],
 
         toolbar: '#tb',
         onLoadSuccess: function () {
 
+        },
+        onLoadError: function (err) {
+            if (err.status === 403) {
+                location.replace('/');
+            } else {
+                $.messager.alert('系统提示', "系统错误", 'error');
+            }
         }
     });
 
@@ -80,46 +87,52 @@ function depositOpen() {
     $('#depositForm').form('clear');
     $("#deposit").dialog('open');
 }
+
 /* 存款提交 */
 function depositCommit() {
     var depositType = $("#depositType").val();
     var pidDeposit = $("#pidDeposit").val();
     var depositAmount = $("#depositAmount").val();
-    if(!depositType){
-        $.messager.alert('系统提示',"类型不能为空", 'info');
+    if (!depositType) {
+        $.messager.alert('系统提示', "类型不能为空", 'info');
         return;
     }
-    if(!pidDeposit){
-        $.messager.alert('系统提示',"密码不能为空", 'info');
+    if (!pidDeposit) {
+        $.messager.alert('系统提示', "密码不能为空", 'info');
         return;
     }
-    if(!depositAmount){
-        $.messager.alert('系统提示',"金额不能为空", 'info');
+    if (!depositAmount) {
+        $.messager.alert('系统提示', "金额不能为空", 'info');
         return;
     }
     $.ajax({
-        type : "POST",
-        url : '/api/account/deposited',
-        data : {
-            "depositType":depositType,
-            "pid":pidDeposit,
-            "amount":depositAmount
+        type: "POST",
+        url: '/api/account/deposited',
+        data: {
+            "depositType": depositType,
+            "pid": pidDeposit,
+            "amount": depositAmount
         },
-        success : function(result) {
-            if(result.returnValue == 'SUCCESS'){
-                $.messager.alert('系统提示',"操作成功", 'info');
+        success: function (result) {
+            if (result.returnValue == 'SUCCESS') {
+                $.messager.alert('系统提示', "操作成功", 'info');
                 $('#depositForm').form('clear');
                 $("#deposit").dialog('close');
-            }else{
-                $.messager.alert('系统提示',result.reason, 'error');
+            } else {
+                $.messager.alert('系统提示', result.reason, 'error');
             }
 
         },
-        error : function(err) {
-            $.messager.alert('系统提示',"操作失败", 'error');
+        error: function (err) {
+            if (err.status === 403) {
+                location.replace('/');
+            } else {
+                $.messager.alert('系统提示', "操作失败", 'error');
+            }
         }
     });
 }
+
 /* 取款 */
 function drawOpen() {
     $('#drawForm').form('clear');
@@ -130,29 +143,33 @@ function drawOpen() {
 function drawCommit() {
     var drawPid = $("#drawPid").val();
     var drawAmount = $("#drawAmount").val();
-    if(!drawAmount){
-        $.messager.alert('系统提示',"金额不能为空", 'info');
+    if (!drawAmount) {
+        $.messager.alert('系统提示', "金额不能为空", 'info');
         return;
     }
-    if(!drawPid){
-        $.messager.alert('系统提示',"密码不能为空", 'info');
+    if (!drawPid) {
+        $.messager.alert('系统提示', "密码不能为空", 'info');
         return;
     }
     $.ajax({
-        type : "POST",
-        url : '/api/account/withdraw',
-        data : {
-            "pid":drawPid,
-            "amount" : drawAmount
+        type: "POST",
+        url: '/api/account/withdraw',
+        data: {
+            "pid": drawPid,
+            "amount": drawAmount
         },
-        success : function(result) {
+        success: function (result) {
             reload();
-            $.messager.alert('系统提示',"操作成功", 'info');
+            $.messager.alert('系统提示', "操作成功", 'info');
             $('#drawForm').form('clear');
             $("#draw").dialog('close');
         },
-        error : function(err) {
-            $.messager.alert('系统提示',"操作失败", 'error');
+        error: function (err) {
+            if (err.status === 403) {
+                location.replace('/');
+            } else {
+                $.messager.alert('系统提示', "操作失败", 'error');
+            }
         }
     });
 };
@@ -160,20 +177,24 @@ function drawCommit() {
 /* 清理资金 */
 function clearCashOpen() {
     $.ajax({
-        type : "POST",
-        url : '/api/account/clearFoundsAmount',
-        success : function(result) {
-            if(result.data && result.data > 0){
+        type: "POST",
+        url: '/api/account/clearFoundsAmount',
+        success: function (result) {
+            if (result.data && result.data > 0) {
 
                 $('#clearCashForm').form('clear');
                 $("#clearCash").dialog('open');
                 $("#clearCashAmount").text(result.data + "元");
-            }else{
-                $.messager.alert('系统提示',"当前暂无待清理资金", 'info');
+            } else {
+                $.messager.alert('系统提示', "当前暂无待清理资金", 'info');
             }
         },
-        error : function(err) {
-            $.messager.alert('系统提示',"系统错误", 'error');
+        error: function (err) {
+            if (err.status === 403) {
+                location.replace('/');
+            } else {
+                $.messager.alert('系统提示', "系统错误", 'error');
+            }
         }
     });
 };
@@ -182,34 +203,38 @@ function clearCashOpen() {
 function clearCashCommit() {
     var clearCashPid = $("#clearCashPid").val();
     var clearCashAmount = $("#clearCashAmount").val();
-    if(!clearCashAmount){
-        $.messager.alert('系统提示',"金额不能为空", 'info');
+    if (!clearCashAmount) {
+        $.messager.alert('系统提示', "金额不能为空", 'info');
         return;
     }
-    if(!clearCashPid){
-        $.messager.alert('系统提示',"密码不能为空", 'info');
+    if (!clearCashPid) {
+        $.messager.alert('系统提示', "密码不能为空", 'info');
         return;
     }
     $.ajax({
-        type : "POST",
-        url : '/api/account/clearFounds',
-        data : {
-            "pid":clearCashPid,
-            "amount" : clearCashAmount
+        type: "POST",
+        url: '/api/account/clearFounds',
+        data: {
+            "pid": clearCashPid,
+            "amount": clearCashAmount
         },
-        success : function(result) {
+        success: function (result) {
             reload();
-            $.messager.alert('系统提示',"操作成功", 'info');
+            $.messager.alert('系统提示', "操作成功", 'info');
             $('#clearCashForm').form('clear');
             $("#clearCash").dialog('close');
         },
-        error : function(err) {
-            $.messager.alert('系统提示',"操作失败", 'error');
+        error: function (err) {
+            if (err.status === 403) {
+                location.replace('/');
+            } else {
+                $.messager.alert('系统提示', "系统错误", 'error');
+            }
         }
     });
 };
 
-function reload(){
+function reload() {
     $("#cashDatagrid").datagrid('reload');
 }
 
