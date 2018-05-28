@@ -40,11 +40,11 @@ public class CustomerController {
                 return new Result<>(Result.ReturnValue.FAILURE, "your credit score is not exist");
             }
             if (credit.getScore() >= 80) {
-                String accountNumber = accountService.createAccount(signInModel);
-                if (accountNumber == null) {
+                String registryResult = accountService.createAccount(signInModel);
+                if (registryResult == null) {
                     return new Result<>(Result.ReturnValue.FAILURE, "system error");
                 }
-                return new Result(Result.ReturnValue.SUCCESS, "success! account:" + signInModel.getName() + ",password:" + accountNumber,"");
+                return new Result(Result.ReturnValue.SUCCESS, registryResult,"");
             } else {
                 return new Result<>(Result.ReturnValue.FAILURE, "your credit score must be greater than 80");
             }

@@ -19,7 +19,18 @@ $(function () {
         columns: [[{
             title: '类型',
             field: 'type',
-            width : fixWidth(0.2)
+            width : fixWidth(0.2),
+            formatter: function(value,row,index){
+                if('withdraw' == value){
+                    return "取钱"
+                }else if('deposited' == value){
+                    return "存钱"
+                }else if('cheque' == value){
+                    return "票存"
+                }else{
+                    return "清理资金"
+                }
+            }
         }, {
             title: '操作账户',
             field: 'number',
@@ -138,6 +149,7 @@ function drawCommit() {
         $.messager.alert('系统提示',"密码不能为空", 'info');
         return;
     }
+
     $.ajax({
         type : "POST",
         url : '/api/account/withdraw',
@@ -146,10 +158,14 @@ function drawCommit() {
             "amount" : drawAmount
         },
         success : function(result) {
-            reload();
-            $.messager.alert('系统提示',"操作成功", 'info');
-            $('#drawForm').form('clear');
-            $("#draw").dialog('close');
+            if(result.returnValue == 'SUCCESS'){
+                reload();
+                $.messager.alert('系统提示',"操作成功", 'info');
+                $('#drawForm').form('clear');
+                $("#draw").dialog('close');
+            }else{
+                $.messager.alert('系统提示',result.reason, 'error');
+            }
         },
         error : function(err) {
             $.messager.alert('系统提示',"操作失败", 'error');
@@ -163,14 +179,18 @@ function clearCashOpen() {
         type : "POST",
         url : '/api/account/clearFoundsAmount',
         success : function(result) {
-            if(result.data && result.data > 0){
-
-                $('#clearCashForm').form('clear');
-                $("#clearCash").dialog('open');
-                $("#clearCashAmount").text(result.data + "元");
+            if(result.returnValue == 'SUCCESS'){
+                if(result.data && result.data > 0){
+                    $('#clearCashForm').form('clear');
+                    $("#clearCash").dialog('open');
+                    $("#clearCashAmount").text(result.data + "元");
+                }else{
+                    $.messager.alert('系统提示',"当前暂无待清理资金", 'info');
+                }
             }else{
-                $.messager.alert('系统提示',"当前暂无待清理资金", 'info');
+                $.messager.alert('系统提示',result.reason, 'error');
             }
+
         },
         error : function(err) {
             $.messager.alert('系统提示',"系统错误", 'error');
@@ -198,10 +218,15 @@ function clearCashCommit() {
             "amount" : clearCashAmount
         },
         success : function(result) {
-            reload();
-            $.messager.alert('系统提示',"操作成功", 'info');
-            $('#clearCashForm').form('clear');
-            $("#clearCash").dialog('close');
+            if(result.returnValue == 'SUCCESS'){
+                reload();
+                $.messager.alert('系统提示',"操作成功", 'info');
+                $('#clearCashForm').form('clear');
+                $("#clearCash").dialog('close');
+            }else{
+                $.messager.alert('系统提示',result.reason, 'error');
+            }
+
         },
         error : function(err) {
             $.messager.alert('系统提示',"操作失败", 'error');
@@ -213,7 +238,3 @@ function reload(){
     $("#cashDatagrid").datagrid('reload');
 }
 
-
-function retUser() {
-    $('#xzUser').window('open');
-}

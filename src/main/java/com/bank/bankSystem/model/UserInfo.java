@@ -52,6 +52,14 @@ public class UserInfo {
         return pin;
     }
 
+    public String getNumber() {
+        return number;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
+    }
+
     public void setPin(String pin) {
         this.pin = pin;
     }
@@ -75,6 +83,8 @@ public class UserInfo {
     private String name;
 
     private String address;
+
+    private String number;
 
     private Date birth;
 

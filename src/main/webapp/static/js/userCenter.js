@@ -12,12 +12,13 @@ $(function () {
         columns: [[{
             title: '姓名',
             field: 'name',
-            width : fixWidth(0.15)
+            align: "center",
+            width : fixWidth(0.08)
         }, {
             title: '地址',
             field: 'address',
             align: 'center',
-            width : fixWidth(0.15)
+            width : fixWidth(0.2)
         }, {
             title: '生日',
             field: 'birth',
@@ -27,49 +28,121 @@ $(function () {
             title: '账户类型',
             field: 'type',
             align: "center",
-            width : fixWidth(0.1)
+            width : fixWidth(0.07)
+
         }, {
-            title: "余额",
+            title: "余额(元)",
             field: 'balance',
             align: "center",
             width : fixWidth(0.1)
         },{
-            title: "待清理资金",
-            field: 'unClearedBalance',
+            title: "待清理资金(元)",
+            field: 'un_cleared_balance',
             align: "center",
             width : fixWidth(0.1)
         },{
+            title: "账户状态",
+            field: 'status',
+            align: "center",
+            width : fixWidth(0.1),
+            formatter: function(value,row,index){
+                if('NORMAL' == value){
+                    return "正常"
+                }else if('SUSPENDED' == value){
+                    return "冻结"
+                }else{
+                    return "关闭"
+                }
+            }
+        },{
             title: '操作',
             field: 'sex',
-            width : fixWidth(0.2),
+            align: "center",
+            width : fixWidth(0.1),
             formatter: function(value,row,index){
-                alert(row);
                 return operationFormater(row)
             }
         }]],
 
 
-        onLoadSuccess: function () {
+        onLoadSuccess: function (result) {
+            console.info(result);
+            $("#frozeAccount").click(function(){
+                $.messager.confirm('操作提示','您确定要冻结该账户',function(r){
+                    if (r){
+                        frozeAccount();
+                    }
+                });
 
+            });
+            $("#closeAccount").click(function(){
+                $.messager.confirm('操作提示','您确定要关闭该账户',function(r){
+                    if (r){
+                        closeAccount();
+                    }
+                });
+
+            });
         }
     });
 
+
+
     function operationFormater(row){
-        var btnGroup = '<span class="easyui-linkbutton" onclick="release(\''
-            + row.id
-            + '\')">发布</span>'
-            + '<span class="easyui-linkbutton" style="margin-left: 20px;" onclick="edit(\''
-            + row.id
-            + '\')">编辑</span>'
-            + '<span class="easyui-linkbutton" style="margin-left: 20px;" onclick="deletes(\''
-            + row.id + '\')">删除</span>';
+        var btnGroup = '<span  style = "color:red"; id = "frozeAccount">冻结账户</span>&nbsp;&nbsp;'
+            + '<span style = "color:green" style="margin-left: 20px"; id = "closeAccount">关闭账户</span>';
         return btnGroup;
+    }
+
+    function frozeAccount(){
+        $.ajax({
+            type : "POST",
+            url : '/api/account/unSuspended',
+           /* data : {
+                "number" : number
+            },*/
+            success : function(result) {
+                if(result.returnValue == 'SUCCESS'){
+                    reload();
+                    $.messager.alert('系统提示',"操作成功", 'info');
+                }else{
+                    $.messager.alert('系统提示',result.reason, 'error');
+                }
+
+            },
+            error : function(err) {
+                $.messager.alert('系统提示',"操作失败", 'error');
+            }
+        });
+    }
+    function closeAccount(){
+        $.ajax({
+            type : "POST",
+            url : '/api/account/close',
+           /* data : {
+                "number" : number
+            },*/
+            success : function(result) {
+                if(result.returnValue == 'SUCCESS'){
+                    reload();
+                    $.messager.alert('系统提示',"操作成功", 'info');
+                }else{
+                    $.messager.alert('系统提示',result.reason, 'error');
+                }
+            },
+            error : function(err) {
+                $.messager.alert('系统提示',"操作失败", 'error');
+            }
+        });
     }
 
     // 列宽
     function fixWidth(percent) {
         return document.documentElement.clientWidth
             * percent; // 这里你可以自己做调整
+    }
+    function reload(){
+        $("#userDatagrid").datagrid('reload');
     }
 
 });

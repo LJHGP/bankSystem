@@ -58,6 +58,10 @@ public class AccountController {
         String number = loginObject.getAccountNumber();
         String pidFromSession = loginObject.getPin();
         Account account = accountMapper.findByNumber(number);
+        String status = account.getStatus();
+        if(!"NORMAL".equals(status)){
+            return new Result<>(Result.ReturnValue.FAILURE, "your acccount is abnormal:" + status.toLowerCase());
+        }
         BigDecimal amountFormat = new BigDecimal(amount);
         if(pid != null && !pid.equals(pidFromSession)){
             return new Result<>(Result.ReturnValue.FAILURE, "your password is wrong");
@@ -108,22 +112,28 @@ public class AccountController {
         String pidFromSession = loginModel.getPin();
         String number = loginModel.getAccountNumber();
         Account account = accountMapper.findByNumber(number);
+        String status = account.getStatus();
+        if(!"NORMAL".equals(status)){
+            return new Result<>(Result.ReturnValue.FAILURE, "your acccount is abnormal:" + status.toLowerCase());
+        }
         if (number == null) {
             return new Result<>(Result.ReturnValue.FAILURE, "your account is not exist");
         }
         if(pid != null && !pid.equals(pidFromSession)){
             return new Result<>(Result.ReturnValue.FAILURE, "your password is wrong");
         }
-        if("cash".equals(depositType)){//现金
-            account.setBalance(account.getBalance().add(new BigDecimal(amount)));
-        }else if("check".equals(depositType)){
-            account.setUnClearedBalance(account.getUnClearedBalance().add(new BigDecimal(amount)));
-        }
         account.setNumber(number);
         account.setPin(pid);
         account.setBalance(account.getBalance().add(new BigDecimal(amount)));
         accountMapper.update(account);
         Record record = new Record();
+        if("cash".equals(depositType)){//现金
+            account.setBalance(account.getBalance().add(new BigDecimal(amount)));
+            record.setType(Record.Type.deposited.name());
+        }else if("check".equals(depositType)){
+            account.setUnClearedBalance(account.getUnClearedBalance().add(new BigDecimal(amount)));
+            record.setType(Record.Type.cheque.name());
+        }
         record.setId(UUID.randomUUID().toString());
         record.setAmount(drawFunds.getAmount());
         record.setAmount(new BigDecimal(amount));
@@ -166,6 +176,10 @@ public class AccountController {
             return new Result<>(Result.ReturnValue.FAILURE, "your password is wrong");
         }
         Account account = accountMapper.findByNumber(number);
+        String status = account.getStatus();
+        if(!"NORMAL".equals(status)){
+            return new Result<>(Result.ReturnValue.FAILURE, "your acccount is abnormal:" + status.toLowerCase());
+        }
         if (account == null) {
             return new Result<>(Result.ReturnValue.FAILURE, "your account is not exist");
         }
@@ -183,11 +197,18 @@ public class AccountController {
         return new Result<>(Result.ReturnValue.SUCCESS, "your pin is wrong", account);
     }
 
-    @PostMapping("/close")
-    public Result<Account> close(@RequestHeader(value = "token") String token) {
-        HttpSession session = SessionStore.getInstance().getSession(token);
-        String number = (String) session.getAttribute(Account.SESSION_ATTR);
+    @RequestMapping("/close")
+    @ResponseBody
+    public Result<Account> close(HttpServletRequest request) {
+        //HttpSession session = SessionStore.getInstance().getSession(token);
+        //String number = (String) session.getAttribute(Account.SESSION_ATTR);
+        LoginModel loginObject = PinUtil.getLoginObject(request);
+        String number = loginObject.getAccountNumber();
         Account account = accountMapper.findByNumber(number);
+        String status = account.getStatus();
+        if(!"NORMAL".equals(status)){
+            return new Result<>(Result.ReturnValue.FAILURE, "your acccount is abnormal:" + status.toLowerCase());
+        }
         if (account == null) {
             return new Result<>(Result.ReturnValue.FAILURE, "your account is not exist");
         }
@@ -199,15 +220,20 @@ public class AccountController {
         return new Result<>(Result.ReturnValue.SUCCESS, "your pin is wrong", account);
     }
 
-    @PostMapping("/unSuspended")
-    public Result<Account> unSuspended(@RequestHeader(value = "token") String token) {
-        HttpSession session = SessionStore.getInstance().getSession(token);
-        String number = (String) session.getAttribute(Account.SESSION_ATTR);
+    @RequestMapping("/unSuspended")
+    @ResponseBody
+    public Result<Account> unSuspended(HttpServletRequest request) {
+        LoginModel loginObject = PinUtil.getLoginObject(request);
+        String number = loginObject.getAccountNumber();
         Account account = accountMapper.findByNumber(number);
+        String status = account.getStatus();
+        if(!"NORMAL".equals(status)){
+            return new Result<>(Result.ReturnValue.FAILURE, "your acccount is abnormal:" + status.toLowerCase());
+        }
         if (account == null) {
             return new Result<>(Result.ReturnValue.FAILURE, "your account is not exist");
         }
-        account.setStatus(Account.Status.NORMAL.name());
+        account.setStatus(Account.Status.SUSPENDED.name());
         accountMapper.update(account);
         return new Result<>(Result.ReturnValue.SUCCESS, "your pin is wrong", account);
     }
@@ -227,6 +253,10 @@ public class AccountController {
         String number = loginObject.getAccountNumber();
         if(number != null){
             Account account = accountMapper.findByNumber(number);
+            String status = account.getStatus();
+            if(!"NORMAL".equals(status)){
+                return new Result<>(Result.ReturnValue.FAILURE, "your acccount is abnormal:" + status.toLowerCase());
+            }
             return new Result<>(Result.ReturnValue.SUCCESS, "your pin is wrong", account.getUnClearedBalance());
         }else{
             return new Result<>(Result.ReturnValue.SUCCESS, "account is null,please login against");
