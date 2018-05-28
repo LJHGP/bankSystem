@@ -14,22 +14,23 @@ $(function () {
             field: 'name',
             align: "center",
             width : fixWidth(0.08)
+
         }, {
             title: '地址',
             field: 'address',
             align: 'center',
             width : fixWidth(0.2)
+
         }, {
             title: '生日',
             field: 'birth',
             align: "center",
-            width : fixWidth(0.1)
+            width: fixWidth(0.1)
         }, {
             title: '账户类型',
             field: 'type',
             align: "center",
             width : fixWidth(0.07)
-
         }, {
             title: "余额(元)",
             field: 'balance',

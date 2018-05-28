@@ -8,14 +8,10 @@ import com.bank.bankSystem.model.Result.ReturnValue;
 import com.bank.bankSystem.session.SessionStore;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -24,7 +20,7 @@ import java.util.Objects;
  * @author admin
  * @create 2018-05-26 13:47
  **/
-@Controller
+@RestController
 @RequestMapping("/api/login")
 @Api(description = "login")
 public class LoginController {
@@ -49,10 +45,10 @@ public class LoginController {
         return new Result(ReturnValue.SUCCESS, "");
     }
 
-    @PostMapping("/logout")
-    public Result<String> logout(HttpServletRequest request, @RequestParam String token) {
+    @PostMapping(value = "/logout")
+    public Result<String> logout(HttpServletRequest request) {
         request.getSession().removeAttribute(Account.SESSION_ATTR);
-        SessionStore.getInstance().removeUser(token);
+        SessionStore.getInstance().removeUser(request.getSession().getId());
         return new Result<>(Result.ReturnValue.SUCCESS);
     }
 }

@@ -8,24 +8,27 @@ $(function () {
     });
 })
 
-function openLogin(){
+function openLogin() {
     $('#loginForm').form('clear');
     $("#login").dialog('open');
 }
 
-function logout(){
-    alert();
-    location.replace('/');
-        /*$.post('/api/login/login', function(result) {
-            if (result.success) {
-                if(result.success=='b'){
-                    $('#loginDialog').dialog('close');
+function logout() {
+    $.messager.confirm('exit', '确定退出吗?', function (r) {
+        if (r) {
+            $.post('/api/login/logout', function (result) {
+                if (result.returnValue === 'SUCCESS') {
                     location.replace('/');
-                    console.log(result);
                 }
-            }
-        }, "JSON");*/
-
+            }, "JSON").error(function (err) {
+                if (err.status === 403) {
+                    location.replace('/');
+                } else {
+                    $.messager.alert('系统提示', "操作失败", 'error');
+                }
+            });
+        }
+    });
 }
 
 function switchThemes() {
@@ -69,6 +72,7 @@ function addTab(title, href, iconCls, iframe) {
         tabPanel.tabs('select', title);
     }
 }
+
 /**
  * Name 移除菜单选项
  */
