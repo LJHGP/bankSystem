@@ -84,7 +84,7 @@ $(function () {
         $("#draw").dialog('close');
     });
     //清理资金
-    $('#clearCashAmount').click(function () {
+    $('#clearCashBtn').click(function () {
         clearCashCommit();
     })
 
@@ -127,6 +127,7 @@ function depositCommit() {
         },
         success: function (result) {
             if (result.returnValue == 'SUCCESS') {
+                reload();
                 $.messager.alert('系统提示', "操作成功", 'info');
                 $('#depositForm').form('clear');
                 $("#deposit").dialog('close');
@@ -223,11 +224,6 @@ function clearCashOpen() {
 /* 清理资金提交 */
 function clearCashCommit() {
     var clearCashPid = $("#clearCashPid").val();
-    var clearCashAmount = $("#clearCashAmount").val();
-    if (!clearCashAmount) {
-        $.messager.alert('系统提示', "金额不能为空", 'info');
-        return;
-    }
     if (!clearCashPid) {
         $.messager.alert('系统提示', "密码不能为空", 'info');
         return;
@@ -236,13 +232,12 @@ function clearCashCommit() {
         type: "POST",
         url: '/api/account/clearFounds',
         data: {
-            "pid": clearCashPid,
-            "amount": clearCashAmount
+            "pid": clearCashPid
         },
         success : function(result) {
             if(result.returnValue == 'SUCCESS'){
-                reload();
                 $.messager.alert('系统提示',"操作成功", 'info');
+                reload();
                 $('#clearCashForm').form('clear');
                 $("#clearCash").dialog('close');
             }else{

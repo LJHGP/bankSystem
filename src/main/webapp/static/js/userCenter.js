@@ -2,7 +2,7 @@ $(function () {
     $('#userDatagrid').datagrid({
         url: "/api/account/accountList",
         title: "用户列表",
-        pagination: true,// 是否分页
+        pagination: false,// 是否分页
         fit: true,//大自动适应
         selectOnCheck: true,//如果设置为true，单击一个复选框，将始终选择行。如果为false，不会选择行选中该复选框。
         loadMsg: "正在加载用户数据，请稍等...",

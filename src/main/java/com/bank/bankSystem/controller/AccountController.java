@@ -1,6 +1,8 @@
 package com.bank.bankSystem.controller;
 
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.bank.bankSystem.domain.Account;
 import com.bank.bankSystem.domain.Record;
 import com.bank.bankSystem.mapper.AccountMapper;
@@ -12,6 +14,8 @@ import com.bank.bankSystem.model.UserInfo;
 import com.bank.bankSystem.service.AccountService;
 import com.bank.bankSystem.session.SessionStore;
 import com.bank.bankSystem.util.PinUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,10 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 
 @Controller
@@ -124,8 +125,6 @@ public class AccountController {
         }
         account.setNumber(number);
         account.setPin(pid);
-        account.setBalance(account.getBalance().add(new BigDecimal(amount)));
-        accountMapper.update(account);
         Record record = new Record();
         if("cash".equals(depositType)){//现金
             account.setBalance(account.getBalance().add(new BigDecimal(amount)));
@@ -138,8 +137,8 @@ public class AccountController {
         record.setAmount(drawFunds.getAmount());
         record.setAmount(new BigDecimal(amount));
         record.setNumber(number);
-        record.setType(Record.Type.deposited.name());
         record.setCreateTime(new Date());
+        accountMapper.update(account);
         recordMapper.insert(record);
         return new Result<>(Result.ReturnValue.SUCCESS, "", account);
     }
@@ -240,10 +239,15 @@ public class AccountController {
 
     @RequestMapping("/recordList")
     @ResponseBody
-    public List recordList(HttpServletRequest request){
+    public String recordList(HttpServletRequest request,int page,int rows){
+
+        PageHelper.startPage(page,rows);
         LoginModel loginObject = PinUtil.getLoginObject(request);
         List<Record> all = recordMapper.findAll(loginObject.getAccountNumber());
-        return all;
+        PageInfo pageInfo = new PageInfo(all);
+        Long total = pageInfo.getTotal();
+        String result = "{\"total\":" + total + ",\"rows\":" + JSONArray.parseArray(JSON.toJSONString(all)) + "}";
+        return result;
     }
 
     @RequestMapping("/clearFoundsAmount")
