@@ -2,7 +2,7 @@ $(function () {
     $('#cashDatagrid').datagrid({
         url: "/api/account/recordList",
         title: "操作记录列表",
-        pagination: true,// 是否分页
+        pagination: false,// 是否分页
         pageSize: 12,//条数
         pageList: [3, 6, 12],//选择条数
         fit: true,//大自动适应
@@ -19,6 +19,7 @@ $(function () {
         columns: [[{
             title: '类型',
             field: 'type',
+            align: "center",
             width : fixWidth(0.2),
             formatter: function(value,row,index){
                 if('withdraw' == value){
@@ -41,10 +42,18 @@ $(function () {
             title: '操作时间',
             field: 'createTime',
             align: "center",
-            width: fixWidth(0.2)
+            width: fixWidth(0.2),
+            formatter: function(value,row,index){
+                 return value;
+                /*if(value != null){
+
+                    return formatDateTime(value);
+                }*/
+            }
         }, {
-            title: '金额',
+            title: '操作金额',
             field: 'amount',
+            align: "center",
             width: fixWidth(0.2)
         }]],
 
@@ -258,4 +267,21 @@ function clearCashCommit() {
 function reload() {
     $("#cashDatagrid").datagrid('reload');
 }
+
+function formatDateTime(timeStamp) {
+    var date = new Date();
+    date.setTime(timeStamp * 1000);
+    var y = date.getFullYear();
+    var m = date.getMonth() + 1;
+    m = m < 10 ? ('0' + m) : m;
+    var d = date.getDate();
+    d = d < 10 ? ('0' + d) : d;
+    var h = date.getHours();
+    h = h < 10 ? ('0' + h) : h;
+    var minute = date.getMinutes();
+    var second = date.getSeconds();
+    minute = minute < 10 ? ('0' + minute) : minute;
+    second = second < 10 ? ('0' + second) : second;
+    return y + '-' + m + '-' + d+' '+h+':'+minute+':'+second;
+};
 

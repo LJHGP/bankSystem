@@ -239,15 +239,15 @@ public class AccountController {
 
     @RequestMapping("/recordList")
     @ResponseBody
-    public String recordList(HttpServletRequest request,int page,int rows){
+    public List<Record> recordList(HttpServletRequest request){
 
-        PageHelper.startPage(page,rows);
+        //PageHelper.startPage(page,rows);
         LoginModel loginObject = PinUtil.getLoginObject(request);
         List<Record> all = recordMapper.findAll(loginObject.getAccountNumber());
-        PageInfo pageInfo = new PageInfo(all);
-        Long total = pageInfo.getTotal();
-        String result = "{\"total\":" + total + ",\"rows\":" + JSONArray.parseArray(JSON.toJSONString(all)) + "}";
-        return result;
+        //PageInfo pageInfo = new PageInfo(all);
+        //Long total = pageInfo.getTotal();
+        //String result = "{\"total\":" + total + ",\"rows\":" + JSONArray.parseArray(JSON.toJSONString(pageInfo.getList())) + "}";
+        return all;
     }
 
     @RequestMapping("/clearFoundsAmount")
