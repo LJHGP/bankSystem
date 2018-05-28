@@ -10,10 +10,11 @@ import com.bank.bankSystem.model.SignInModel;
 import com.bank.bankSystem.service.AccountService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 
-@RestController
+@Controller
 @RequestMapping("/api/customer")
 @Api(description = "customer")
 public class CustomerController {
@@ -29,8 +30,8 @@ public class CustomerController {
     private AccountService accountService;
 
 
-    @PostMapping("/signIn")
-    public Result<Account> signIn(@RequestBody SignInModel signInModel) {
+    @RequestMapping("/signIn")
+    public Result<Account> signIn(SignInModel signInModel) {
         Credit credit = creditMapper.findByName(signInModel.getName());
         if (credit == null) {
             return new Result<>(Result.ReturnValue.FAILURE, "your credit score is not exist");

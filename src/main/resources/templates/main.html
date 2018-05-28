@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:javascript="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Title</title>
+    <script type="text/javascript"
+            src="../jquery-easyui-1.5.2/jquery.min.js"></script>
+    <script type="text/javascript"
+            src="../jquery-easyui-1.5.2/jquery.easyui.min.js"></script>
+    <script type="text/javascript"
+            src="../jquery-easyui-1.5.2/locale/easyui-lang-zh_CN.js"></script>
+    <link rel="stylesheet"
+          href="../jquery-easyui-1.5.2/themes/bootstrap/easyui.css" type="text/css"/>
+    <link rel="stylesheet" href="../jquery-easyui-1.5.2/themes/icon.css"
+          type="text/css"/>
+    <link rel="stylesheet" href="../css/index.css" type="text/css"/>
+    <script type="text/javascript" src="static/js/main.js"></script>
+</head>
+<body class="easyui-layout">
+<!-- begin of header -->
+<div class="wu-header" region="north" split="true" border="false">
+    <div class="wu-header-left">
+        <h1>银行系统</h1>
+    </div>
+    <div class="wu-header-right">
+        <br/>
+        <a href="javascript:void(0)" onclick="logout()">安全退出</a></p>
+    </div>
+</div>
+<!-- end of header -->
+<!-- begin of sidebar -->
+<div class="wu-sidebar" region="west" split="true" border="true" title="导航菜单">
+    <div class="easyui-accordion" data-options="border:false,fit:true">
+        <div title="快捷11菜单" data-options="iconCls:'icon-application-cascade'" style="padding:5px;">
+            <ul class="easyui-tree wu-side-tree">
+                <li iconCls="icon-chart-organisation"><a href="javascript:void(0)" data-icon="icon-chart-organisation"
+                                                         data-link="pages/userCenter.html" iframe="0">用户中心</a></li>
+                <li iconCls="icon-man"><a href="javascript:void(0)" data-icon="icon-man"
+                                          data-link="pages/cash.html" iframe="0">现金操作</a></li>
+
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- end of sidebar -->
+<!-- begin of main -->
+<div class="wu-main" region="center">
+    <div id="wu-tabs" class="easyui-tabs" data-options="border:false,fit:true,tools:'#tab-tools'" >
+        <div title="首页" data-options="href:'pages/index.html',closable:false,iconCls:'icon-large-chart',cls:'pd3'"></div>
+        <div id="tab-tools">
+            <a href="javascript:void(0)" class="easyui-linkbutton" plain="true" iconCls="icon-help"></a>
+            <a href="#" class="easyui-menubutton" plain="true" iconCls="icon-switch-themes" data-options="menu:'#mm'"></a>
+        </div>
+        <div id="mm" style="width:150px;">
+
+        </div>
+
+    </div>
+
+    <!-- 清理资金 -->
+    <div id="login" class="easyui-dialog" title="清理资金" closed="true">
+        <form id="loginForm" method="post">
+            <table cellpadding="5">
+                <tr>
+                    <td>密码:</td>
+                    <td><input class="easyui-textbox" type="password" name="pwd"
+                               id="pwd1" data-options="required:true,validType:'password'"></input></td>
+                </tr>
+                <tr>
+                    <td>待清理资金:</td>
+                    <td><input class="easyui-textbox" type="text" name="age"
+                               id="age1" data-options="required:true,validType:'number'"></input></td>
+                </tr>
+            </table>
+        </form>
+        <div style="text-align: center; padding: 5px">
+            <a href="javascript:void(0)" class="easyui-linkbutton"
+               id="clearCashBtn" style="width: 100px;">提交</a> <a
+                href="javascript:void(0)" class="easyui-linkbutton" id="resetClearCash"
+                style="width: 100px;">清空</a>
+        </div>
+</div>
+<!-- end of main -->
+<!-- begin of footer -->
+<div class="wu-footer" region="south" split="true" border="true">
+
+</div>
+</div>
+</body>
+</html>

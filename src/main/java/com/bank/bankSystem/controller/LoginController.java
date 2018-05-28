@@ -2,7 +2,6 @@ package com.bank.bankSystem.controller;
 
 import com.bank.bankSystem.domain.Account;
 import com.bank.bankSystem.mapper.AccountMapper;
-import com.bank.bankSystem.model.LoginModel;
 import com.bank.bankSystem.model.Result;
 import com.bank.bankSystem.session.SessionStore;
 import io.swagger.annotations.Api;
@@ -11,8 +10,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.util.Objects;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 登录模块
@@ -20,7 +20,7 @@ import java.util.Objects;
  * @author admin
  * @create 2018-05-26 13:47
  **/
-@Controller
+@RestController
 @RequestMapping("/api/login")
 @Api(description = "login")
 public class LoginController {
@@ -28,8 +28,14 @@ public class LoginController {
     @Autowired
     private AccountMapper accountMapper;
 
-    @RequestMapping("/login")
-    public String login() {
+    @PostMapping("/login")
+    public Map login() {
+        Map map = new HashMap();
+        // TODO Auto-generated method stub
+        String s="b";
+
+
+        map.put("success",s);
 
         /*Account account = accountMapper.findByNumber(loginModel.getAccountNumber());
         if (account == null) {
@@ -41,7 +47,7 @@ public class LoginController {
         HttpSession session = request.getSession();
         session.setAttribute(Account.SESSION_ATTR, loginModel.getAccountNumber());
         SessionStore.getInstance().addUser(session.getId(), session);*/
-        return "/index";
+        return map;
     }
 
     @PostMapping("/logout")

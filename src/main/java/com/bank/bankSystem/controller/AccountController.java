@@ -85,19 +85,20 @@ public class AccountController {
 
 
     @PostMapping("/deposited")
-    public Result<Account> deposited(@RequestBody FundsModel drawFunds, @RequestHeader(value = "token") String token) {
-        HttpSession session = SessionStore.getInstance().getSession(token);
-        String number = (String) session.getAttribute(Account.SESSION_ATTR);
-        Account account = accountMapper.findByNumber(number);
+    public Result<Account> deposited(String amount) {
+        //HttpSession session = SessionStore.getInstance().getSession(token);
+        FundsModel drawFunds = new FundsModel();
+       // String number = (String) session.getAttribute(Account.SESSION_ATTR);
+        Account account = new Account();
         if (account == null) {
             return new Result<>(Result.ReturnValue.FAILURE, "your account is not exist");
         }
-        account.setBalance(account.getBalance().add(drawFunds.getAmount()));
+        account.setBalance(account.getBalance().add(new BigDecimal(amount)));
         accountMapper.update(account);
         Record record = new Record();
         record.setId(UUID.randomUUID().toString());
         record.setAmount(drawFunds.getAmount());
-        record.setNumber(number);
+        record.setNumber("1111");
         record.setType(Record.Type.deposited.name());
         record.setCreateTime(new Date());
         recordMapper.insert(record);
